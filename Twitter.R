@@ -24,7 +24,7 @@ updateTable <- function(str,table) {
   lastID <- as.numeric(dbGetQuery(con, statement = paste("SELECT max(id) from ",table)))
 	
   tweets <- searchTwitter(str, n=1000,sinceID=lastID)
-	tweetsDF <- ldply(tweets, as.data.frame)
+  tweetsDF <- ldply(tweets, as.data.frame)
 	
   if (nrow(tweetsDF)>0) {
     con <- dbConnect(RSQLite::SQLite(), "twitter.db")
