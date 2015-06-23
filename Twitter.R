@@ -21,19 +21,20 @@ createTable <- function(str,table) {
 
 updateTable <- function(str,table) {
 	
+  con <- dbConnect(RSQLite::SQLite(), "twitter.db")
+  
   lastID <- as.numeric(dbGetQuery(con, statement = paste("SELECT max(id) from ",table)))
 	
   tweets <- searchTwitter(str, n=1000,sinceID=lastID)
   tweetsDF <- ldply(tweets, as.data.frame)
 	
-  if (nrow(tweetsDF)>0) {
-    con <- dbConnect(RSQLite::SQLite(), "twitter.db")
+  if (nrow(tweetsDF)>0) 
     dbWriteTable(con, table, tweetsDF, append = T)
-    dbDisconnect(con)
-  }
+  
+  dbDisconnect(con)
 	
 }
 
-#createTable()
-updateTable("keyword","tablename")
+createTable("keyword","tablename")
+#updateTable("keyword","tablename")
 
