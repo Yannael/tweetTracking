@@ -4,6 +4,8 @@ require(RSQLite)
 require(twitteR)
 require(plyr)
 
+options(httr_oauth_cache=T)
+
 #Connect using preregistered credentials
 load('credentials.Rdata')
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
@@ -22,11 +24,10 @@ createTable <- function(str,table) {
 updateTable <- function(str,table) {
 	
   con <- dbConnect(RSQLite::SQLite(), "twitter.db")
-  
   lastID <- as.numeric(dbGetQuery(con, statement = paste("SELECT max(id) from ",table)))
 	
-  tweets <- searchTwitter(str, n=1000,sinceID=lastID)
-  tweetsDF <- ldply(tweets, as.data.frame)
+  tweets <- searchTwitter(str, n=50,sinceID=lastID)
+	tweetsDF <- ldply(tweets, as.data.frame)
 	
   if (nrow(tweetsDF)>0) 
     dbWriteTable(con, table, tweetsDF, append = T)
@@ -35,6 +36,9 @@ updateTable <- function(str,table) {
 	
 }
 
-createTable("keyword","tablename")
-#updateTable("keyword","tablename")
+#createTable("opendata","opendata")
+#updateTable("opendata","opendata")
+
+
+
 
